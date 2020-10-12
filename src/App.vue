@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <Menu></Menu>
+    <Ctrl></Ctrl>
   </div>
 </template>
 
 <script>
-import Menu from './components/Menu'
+import Ctrl from './components/CtrlTec'
 export default {
   name: 'App',
   components:{
-    Menu
+    Ctrl
   }
 }
 </script>
