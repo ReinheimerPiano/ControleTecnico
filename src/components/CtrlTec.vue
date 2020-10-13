@@ -20,19 +20,43 @@
                 <td class="text-start">{{ item.Cliente.Nome }}</td>
                 <td class="text-start">{{ item.Ambiente }}</td>
                 <td class="text-start">{{ item.Contrato }}</td>
-                <td class="text-start">{{ item.DataVenda }}</td>
-                <td class="text-start">
-                  {{ item.DataMedicao }}
+                <td class="text-center">{{ item.DataVenda }}</td>
+                <td
+                  :class="
+                    overdue(item.DataMedicao)
+                      ? item.CLSDataMedicao != ''
+                        ? 'text-center light-green lighten-1 white--text'
+                        : 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center'
+                  "
+                >
+                  {{
+                    item.CLSDataMedicao != ""
+                      ? item.CLSDataMedicao
+                      : item.DataMedicao
+                  }}
                   <v-badge
-                    v-show="item.ATDataTecnico > 0"
+                    v-show="item.ATDataMedicao > 0"
                     color="red"
                     :content="item.ATDataMedicao"
                     class="mb-2"
                   >
                   </v-badge>
                 </td>
-                <td class="text-start">
-                  {{ item.DataTecnico }}
+                <td
+                  :class="
+                    overdue(item.DataTecnico)
+                      ? item.CLSDataTecnico != ''
+                        ? 'text-center light-green lighten-1 white--text'
+                        : 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center'
+                  "
+                >
+                  {{
+                    item.CLSDataTecnico != ""
+                      ? item.CLSDataTecnico
+                      : item.DataTecnico
+                  }}
                   <v-badge
                     v-show="item.ATDataTecnico > 0"
                     color="red"
@@ -41,41 +65,83 @@
                   >
                   </v-badge>
                 </td>
-                <td class="text-start">
-                  {{ item.DataReuniao }}
+                <td
+                  :class="
+                    overdue(item.DataReuniao)
+                      ? item.CLSDataReuniao != ''
+                        ? 'text-center light-green lighten-1 white--text'
+                        : 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center'
+                  "
+                >
+                  {{
+                    item.CLSDataReuniao != ""
+                      ? item.CLSDataReuniao
+                      : item.DataReuniao
+                  }}
                   <v-badge
-                    v-show="item.ATDataTecnico > 0"
+                    v-show="item.ATDataReuniao > 0"
                     color="red"
                     :content="item.ATDataReuniao"
                     class="mb-2"
                   >
                   </v-badge>
                 </td>
-                <td class="text-start">
-                  {{ item.DataAssinatura }}
+                <td
+                  :class="
+                    overdue(item.DataAssinatura)
+                      ? item.CLSDataAssinatura != ''
+                        ? 'text-center light-green lighten-1 white--text'
+                        : 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center'
+                  "
+                >
+                  {{
+                    item.CLSDataAssinatura != ""
+                      ? item.CLSDataAssinatura
+                      : item.DataAssinatura
+                  }}
                   <v-badge
-                    v-show="item.ATDataTecnico > 0"
+                    v-show="item.ATDataAssinatura > 0"
                     color="red"
                     :content="item.ATDataAssinatura"
                     class="mb-2"
                   >
                   </v-badge>
                 </td>
-                <td class="text-start">
-                  {{ item.DataExecProjeto }}
+                <td
+                  :class="
+                    overdue(item.DataProjetoTec)
+                      ? item.CLSDataProjetoTec != ''
+                        ? 'text-center light-green lighten-1 white--text'
+                        : 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center'
+                  "
+                >
+                  {{
+                    item.CLSDataProjetoTec != ""
+                      ? item.CLSDataProjetoTec
+                      : item.DataProjetoTec
+                  }}
                   <v-badge
-                    v-show="item.ATDataTecnico > 0"
+                    v-show="item.ATDataProjetoTec > 0"
                     color="red"
-                    :content="item.ATDataExecProjeto"
+                    :content="item.ATDataProjetoTec"
                     class="mb-2"
                   >
                   </v-badge>
                 </td>
-                <td class="text-start">
-                  {{ item.CLSDataExecProjeto }}
+                <td class="text-center">
+                  {{ item.CLSDataProjetoTec }}
                 </td>
-                <td class="text-start red--text text--lighten-1">
-                  {{ item.Atraso }}
+                <td
+                  :class="
+                    item.Atraso > 25
+                      ? 'text-center red darken-4 lighten-1 white--text'
+                      : 'text-center red--text text--accent-4'
+                  "
+                >
+                  <h2>{{ item.Atraso }}</h2>
                 </td>
                 <td>
                   <v-btn @click="expand(!isExpanded)" icon color="gray"
@@ -96,7 +162,17 @@
                     vertical
                     style="background-color: #f0f0f0;"
                   >
-                    <v-stepper-step :complete="stp > 1" step="1" editable>
+                    <v-stepper-step
+                      :complete="item.CLSDataMedicao != ''"
+                      step="1"
+                      editable
+                      :edit-icon="
+                        item.CLSDataMedicao != ''
+                          ? 'mdi-check'
+                          : 'mdi-progress-clock'
+                      "
+                      :color="item.CLSDataMedicao != '' ? 'success' : 'primary'"
+                    >
                       Medição
                       <small>Data e Funcionário</small>
                     </v-stepper-step>
@@ -175,7 +251,17 @@
                       </v-btn>
                     </v-stepper-content>
 
-                    <v-stepper-step :complete="stp > 2" step="2" editable>
+                    <v-stepper-step
+                      :complete="item.CLSDataTecnico != ''"
+                      step="2"
+                      editable
+                      :edit-icon="
+                        item.CLSDataTecnico != ''
+                          ? 'mdi-check'
+                          : 'mdi-progress-clock'
+                      "
+                      :color="item.CLSDataTecnico != '' ? 'success' : 'primary'"
+                    >
                       Atribuir Técnico
                     </v-stepper-step>
                     <v-stepper-content step="2">
@@ -231,7 +317,17 @@
                       </v-btn>
                     </v-stepper-content>
 
-                    <v-stepper-step :complete="stp > 3" step="3" editable>
+                    <v-stepper-step
+                      :complete="item.CLSDataReuniao != ''"
+                      step="3"
+                      editable
+                      :edit-icon="
+                        item.CLSDataReuniao != ''
+                          ? 'mdi-check'
+                          : 'mdi-progress-clock'
+                      "
+                      :color="item.CLSDataReuniao != '' ? 'success' : 'primary'"
+                    >
                       Reunião
                       <small>Data e Envolvidos</small>
                     </v-stepper-step>
@@ -344,7 +440,19 @@
                       </v-btn>
                     </v-stepper-content>
 
-                    <v-stepper-step :complete="stp > 4" step="4" editable>
+                    <v-stepper-step
+                      :complete="item.CLSDataAssinatura != ''"
+                      step="4"
+                      editable
+                      :edit-icon="
+                        item.CLSDataAssinatura != ''
+                          ? 'mdi-check'
+                          : 'mdi-progress-clock'
+                      "
+                      :color="
+                        item.CLSDataAssinatura != '' ? 'success' : 'primary'
+                      "
+                    >
                       Assinatura
                     </v-stepper-step>
                     <v-stepper-content step="4">
@@ -488,8 +596,20 @@
                       </v-btn>
                     </v-stepper-content>
 
-                    <v-stepper-step :complete="stp > 5" step="5" editable>
-                      Execução do Projeto
+                    <v-stepper-step
+                      :complete="item.CLSDataProjetoTec != ''"
+                      step="5"
+                      editable
+                      :edit-icon="
+                        item.CLSDataProjetoTec != ''
+                          ? 'mdi-check'
+                          : 'mdi-progress-clock'
+                      "
+                      :color="
+                        item.CLSDataProjetoTec != '' ? 'success' : 'primary'
+                      "
+                    >
+                      Projeto Técnico
                     </v-stepper-step>
                     <v-stepper-content step="5">
                       <v-card color="white" class="pa-3 mb-12" height="100%">
@@ -530,7 +650,7 @@ export default {
     return {
       expanded: [],
       singleExpand: true,
-      stp: 7,
+      stp: 0,
       headers: [
         { text: "Loja", value: "idLoja" },
         { text: "Cód. Cli", value: "idCliente" },
@@ -542,9 +662,9 @@ export default {
         { text: "Dt.Técnico.", value: "DataTecnico" },
         { text: "Dt. Reunião.", value: "DataReuniao" },
         { text: "Dt. Ass.", value: "DataAssinatura" },
-        { text: "Dt. Exec. Proj.", value: "DataIniExecProjeto" },
-        { text: "Dt. Conclusão", value: "DataConclusaoProjeto" },
-        { text: "Atraso", value: "Atraso" },
+        { text: "Dt. Proj. Tec.", value: "DataIniExecProjeto" },
+        { text: "Dt. Conclusão", value: "CLSDataProjetoTec" },
+        { text: "TOTAL ATRASO", value: "Atraso" },
         { text: "", value: "data-table-expand" },
       ],
       ambientes: [
@@ -561,24 +681,24 @@ export default {
           Contrato: "200901996",
           Tecnico: "Bruno Cunha",
           Medidor: "",
-          DataVenda: "03/09/2020",
-          DataMedicao: "",
-          CLSDataMedicao: "",
-          ATDataMedicao: 0,
-          DataTecnico: "",
-          CLSDataTecnico: "",
-          ATDataTecnico: 0,
-          DataReuniao: "",
-          CLSDataReuniao: "",
-          ATDataReuniao: 0,
-          TAssinatura: ["10/09/2020", "25/09/2020"],
-          DataAssinatura: "",
-          CLSDataAssinatura: "",
-          ATDataAssinatura: 0,
-          DataExecProjeto: "",
-          CLSDataExecProjeto: "",
-          ATDataExecProjeto: 0,
-          Atraso: 0,
+          DataVenda: "02/09/2020",
+          DataMedicao: "07/09/2020",
+          CLSDataMedicao: "07/09/2020",
+          ATDataMedicao: 5,
+          DataTecnico: "08/09/2020",
+          CLSDataTecnico: "12/09/2020",
+          ATDataTecnico: 5,
+          DataReuniao: "14/09/2020",
+          CLSDataReuniao: "14/09/2020",
+          ATDataReuniao: 2,
+          TAssinatura: ["18/09/2020", "21/09/2020"],
+          DataAssinatura: "28/09/2020",
+          CLSDataAssinatura: "28/09/2020",
+          ATDataAssinatura: 14,
+          DataProjetoTec: "28/09/2020",
+          CLSDataProjetoTec: "",
+          ATDataProjetoTec: 15,
+          Atraso: 41,
         },
         {
           idLoja: "2009",
@@ -593,10 +713,10 @@ export default {
           Contrato: "200901977",
           Tecnico: "",
           Medidor: "",
-          DataVenda: "05/06/2020",
-          DataMedicao: "08/06/2020",
+          DataVenda: "12/08/2020",
+          DataMedicao: "15/08/2020",
           CLSDataMedicao: "",
-          ATDataMedicao: 3,
+          ATDataMedicao: 62,
           DataTecnico: "",
           CLSDataTecnico: "",
           ATDataTecnico: 0,
@@ -607,10 +727,10 @@ export default {
           DataAssinatura: "",
           CLSDataAssinatura: "",
           ATDataAssinatura: 0,
-          DataExecProjeto: "",
-          CLSDataExecProjeto: "",
-          ATDataExecProjeto: 0,
-          Atraso: 3,
+          DataProjetoTec: "",
+          CLSDataProjetoTec: "",
+          ATDataProjetoTec: 0,
+          Atraso: 62,
         },
         {
           idLoja: "2009",
@@ -639,9 +759,9 @@ export default {
           DataAssinatura: "14/09/2020",
           CLSDataAssinatura: "17/09/2020",
           ATDataAssinatura: 3,
-          DataExecProjeto: "17/09/2020",
-          CLSDataExecProjeto: "21/09/2020",
-          ATDataExecProjeto: 4,
+          DataProjetoTec: "17/09/2020",
+          CLSDataProjetoTec: "21/09/2020",
+          ATDataProjetoTec: 4,
           Atraso: 16,
         },
         {
@@ -655,26 +775,26 @@ export default {
           },
           Ambiente: "AD",
           Contrato: "200901615",
-          Tecnico: "Bruno Cunha",
+          Tecnico: "",
           Medidor: "",
-          DataVenda: "03/09/2020",
-          DataMedicao: "05/09/2020",
-          CLSDataMedicao: "08/09/2020",
-          ATDataMedicao: 3,
-          DataTecnico: "08/09/2020",
-          CLSDataTecnico: "11/09/2020",
-          ATDataTecnico: 3,
-          DataReuniao: "11/09/2020",
-          CLSDataReuniao: "14/09/2020",
-          ATDataReuniao: 3,
-          TAssinatura: ["10/09/2020", "25/09/2020"],
-          DataAssinatura: "14/09/2020",
-          CLSDataAssinatura: "17/09/2020",
-          ATDataAssinatura: 3,
-          DataExecProjeto: "17/09/2020",
-          CLSDataExecProjeto: "21/09/2020",
-          ATDataExecProjeto: 4,
-          Atraso: 16,
+          DataVenda: "02/10/2020",
+          DataMedicao: "05/10/2020",
+          CLSDataMedicao: "06/10/2020",
+          ATDataMedicao: 4,
+          DataTecnico: "08/10/2020",
+          CLSDataTecnico: "12/10/2020",
+          ATDataTecnico: 6,
+          DataReuniao: "13/09/2020",
+          CLSDataReuniao: "",
+          ATDataReuniao: 1,
+          TAssinatura: [""],
+          DataAssinatura: "",
+          CLSDataAssinatura: "",
+          ATDataAssinatura: 0,
+          DataProjetoTec: "",
+          CLSDataProjetoTec: "",
+          ATDataProjetoTec: 0,
+          Atraso: 11,
         },
       ],
       explodItem: {
@@ -705,9 +825,9 @@ export default {
         DataAssinatura: "",
         CLSDataAssinatura: "",
         ATDataAssinatura: 0,
-        DataExecProjeto: "",
-        CLSDataExecProjeto: "",
-        ATDataExecProjeto: 0,
+        DataProjetoTec: "",
+        CLSDataProjetoTec: "",
+        ATDataProjetoTec: 0,
         Atraso: 0,
       },
       type: "month",
@@ -768,18 +888,8 @@ export default {
         { name: "Sandra Williams", group: "Medidor" },
       ],
       interessados: [],
-      editedIndex: -1,
-      editedItem: {
-        Nome: "",
-        Abreviacao: "",
-      },
-      defaultItem: {
-        name: "",
-        Abreviacao: "",
-      },
     };
   },
-  watch: {},
   computed: {
     computedDateFormattedMedicao: {
       // getter
@@ -801,16 +911,16 @@ export default {
       if (value) {
         this.editedIndex = this.ambientes.indexOf(item);
         this.explodItem = Object.assign({}, item);
-        if (this.explodItem.CLSDataMedicao != "") {
-          this.stp = 2;
-        } else if (this.explodItem.CLSDataTecnico != "") {
-          this.stp = 3;
-        } else if (this.explodItem.CLSDataReuniao != "") {
-          this.stp = 4;
+        if (this.explodItem.CLSDataProjetoTec != "") {
+          this.stp = 0;
         } else if (this.explodItem.CLSDataAssinatura != "") {
           this.stp = 5;
-        } else if (this.explodItem.CLSDataExecProjeto != "") {
-          this.stp = 6;
+        } else if (this.explodItem.CLSDataReuniao != "") {
+          this.stp = 4;
+        } else if (this.explodItem.CLSDataTecnico != "") {
+          this.stp = 3;
+        } else if (this.explodItem.CLSDataMedicao != "") {
+          this.stp = 2;
         } else {
           this.stp = 1;
         }
@@ -820,12 +930,8 @@ export default {
       const events = [];
       const min = new Date(`${start.date}T09:00:00`);
       const max = new Date(`${end.date}T17:59:59`);
-      console.log(min);
-      console.log(max);
       const days = (max.getTime() - min.getTime()) / 86400000;
       const eventCount = this.rnd(days - 20, days - 10);
-      console.log(eventCount);
-
       for (let i = 0; i < eventCount; i++) {
         const allDay = 1;
         const first = new Date(
@@ -875,7 +981,12 @@ export default {
 
       return true;
     },
+    overdue(date) {
+      const dn = Date.now();
+      const dateNow = new Date();
+      const dateParam = new Date(this.formatDate(date));
+      return dateNow > dateParam && date != "";
+    },
   },
-  async mounted() {},
 };
 </script>
