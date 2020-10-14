@@ -25,8 +25,8 @@
                   :class="
                     overdue(item.DataMedicao)
                       ? item.CLSDataMedicao != ''
-                        ? 'text-center light-green lighten-1 white--text'
-                        : 'text-center red darken-4 lighten-1 white--text'
+                        ? 'text-center green--text text--darken-4'
+                        : 'text-center red--text text--darken-4'
                       : 'text-center'
                   "
                 >
@@ -37,7 +37,13 @@
                   }}
                   <v-badge
                     v-show="item.ATDataMedicao > 0"
-                    color="red"
+                    :color="
+                      overdue(item.DataMedicao)
+                        ? item.CLSDataMedicao != ''
+                          ? 'green'
+                          : 'red'
+                        : 'green'
+                    "
                     :content="item.ATDataMedicao"
                     class="mb-2"
                   >
@@ -47,8 +53,8 @@
                   :class="
                     overdue(item.DataTecnico)
                       ? item.CLSDataTecnico != ''
-                        ? 'text-center light-green lighten-1 white--text'
-                        : 'text-center red darken-4 lighten-1 white--text'
+                        ? 'text-center green--text text--darken-4'
+                        : 'text-center red--text text--darken-4'
                       : 'text-center'
                   "
                 >
@@ -59,7 +65,13 @@
                   }}
                   <v-badge
                     v-show="item.ATDataTecnico > 0"
-                    color="red"
+                    :color="
+                      overdue(item.DataTecnico)
+                        ? item.CLSDataTecnico != ''
+                          ? 'green'
+                          : 'red'
+                        : 'green'
+                    "
                     :content="item.ATDataTecnico"
                     class="mb-2"
                   >
@@ -69,8 +81,8 @@
                   :class="
                     overdue(item.DataReuniao)
                       ? item.CLSDataReuniao != ''
-                        ? 'text-center light-green lighten-1 white--text'
-                        : 'text-center red darken-4 lighten-1 white--text'
+                        ? 'text-center green--text text--darken-4'
+                        : 'text-center red--text text--darken-4'
                       : 'text-center'
                   "
                 >
@@ -81,7 +93,13 @@
                   }}
                   <v-badge
                     v-show="item.ATDataReuniao > 0"
-                    color="red"
+                    :color="
+                      overdue(item.DataReuniao)
+                        ? item.CLSDataReuniao != ''
+                          ? 'green'
+                          : 'red'
+                        : 'green'
+                    "
                     :content="item.ATDataReuniao"
                     class="mb-2"
                   >
@@ -91,8 +109,8 @@
                   :class="
                     overdue(item.DataAssinatura)
                       ? item.CLSDataAssinatura != ''
-                        ? 'text-center light-green lighten-1 white--text'
-                        : 'text-center red darken-4 lighten-1 white--text'
+                        ? 'text-center green--text text--darken-4'
+                        : 'text-center red--text text--darken-4'
                       : 'text-center'
                   "
                 >
@@ -103,7 +121,13 @@
                   }}
                   <v-badge
                     v-show="item.ATDataAssinatura > 0"
-                    color="red"
+                    :color="
+                      overdue(item.DataAssinatura)
+                        ? item.CLSDataAssinatura != ''
+                          ? 'green'
+                          : 'red'
+                        : 'green'
+                    "
                     :content="item.ATDataAssinatura"
                     class="mb-2"
                   >
@@ -113,8 +137,8 @@
                   :class="
                     overdue(item.DataProjetoTec)
                       ? item.CLSDataProjetoTec != ''
-                        ? 'text-center light-green lighten-1 white--text'
-                        : 'text-center red darken-4 lighten-1 white--text'
+                        ? 'text-center green--text text--darken-4'
+                        : 'text-center red--text text--darken-4'
                       : 'text-center'
                   "
                 >
@@ -125,7 +149,13 @@
                   }}
                   <v-badge
                     v-show="item.ATDataProjetoTec > 0"
-                    color="red"
+                    :color="
+                      overdue(item.DataProjetoTec)
+                        ? item.CLSDataProjetoTec != ''
+                          ? 'green'
+                          : 'red'
+                        : 'green'
+                    "
                     :content="item.ATDataProjetoTec"
                     class="mb-2"
                   >
@@ -137,11 +167,11 @@
                 <td
                   :class="
                     item.Atraso > 25
-                      ? 'text-center red darken-4 lighten-1 white--text'
-                      : 'text-center red--text text--accent-4'
+                      ? 'text-center red--text text--darken-4'
+                      : 'text-center'
                   "
                 >
-                  <h2>{{ item.Atraso }}</h2>
+                  {{ item.Atraso }}
                 </td>
                 <td>
                   <v-btn @click="expand(!isExpanded)" icon color="gray"
