@@ -1,674 +1,800 @@
 <template>
   <v-app id="inspire">
     <v-main>
-      <v-container class="fill-height" fluid>
-        <div style="width: 100vw; height: 100vh">
-          <v-data-table
-            :headers="headers"
-            :items="ambientes"
-            :single-expand="singleExpand"
-            :expanded.sync="expanded"
-            item-key="Contrato"
-            show-expand
-            class="elevation-1"
-            @item-expanded="loadExplod"
+      <v-toolbar color="grey lighten-5" style="width:100vw; position: fixed; z-index: 100;" dense elevation="0">
+        <v-slide-x-transition mode="out-in">
+          <v-col v-if="searchExpanded" cols="4" class="ml-1">
+            <v-combobox
+              color="white "
+              label="Nome"
+              class="mb-n7 rounded-0 rounded-l"
+              style="float: left; width: 8rem; line-height: 2rem !important"
+            ></v-combobox>
+            <v-text-field
+              append-icon="mdi-close"
+              @click:append="searchExpanded = !searchExpanded"
+              label="Pesquisar"
+              class="mb-n7 rounded-0 rounded-r"
+              style="line-height: 2rem"
+            >
+            </v-text-field>
+          </v-col>
+          <v-btn
+            v-else
+            icon
+            @click="searchExpanded = !searchExpanded"
+            class="ml-1"
           >
-            <template v-slot:item="{ item, expand, isExpanded }">
-              <tr>
-                <td class="text-start">{{ item.idLoja }}</td>
-                <td class="text-start">{{ item.Cliente.idCliente }}</td>
-                <td class="text-start">{{ item.Cliente.Nome }}</td>
-                <td class="text-start">{{ item.Ambiente }}</td>
-                <td class="text-start">{{ item.Contrato }}</td>
-                <td class="text-center">{{ item.DataVenda }}</td>
-                <td
-                  :class="
-                    overdue(item.DataMedicao)
-                      ? item.CLSDataMedicao != ''
-                        ? 'text-center green--text text--darken-4'
-                        : 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{
-                    item.CLSDataMedicao != ""
-                      ? item.CLSDataMedicao
-                      : item.DataMedicao
-                  }}
-                  <v-badge
-                    v-show="item.ATDataMedicao > 0"
-                    :color="
+            <v-icon class="">mdi-magnify</v-icon>
+          </v-btn>
+        </v-slide-x-transition>
+
+        <v-divider class="mx-2" vertical inset></v-divider>
+
+        <v-slide-x-transition mode="out-in">
+          <div v-if="filterExpanded" class="d-flex" cols="3">
+            <v-col class="px-1">
+              <v-combobox
+                clearable
+                dense
+                :items="ambientes.map((obj) => obj)"
+                :item-value="(obj) => obj['Cliente'].Nome"
+                :item-text="(obj) => obj['Cliente'].Nome"
+                label="Clientes"
+                class="mb-n7"
+                color=""
+              ></v-combobox>
+            </v-col>
+            <v-col class="px-1">
+              <v-combobox
+                clearable
+                dense
+                :items="tecnicos.map((obj) => obj)"
+                :item-value="(obj) => obj['name']"
+                :item-text="(obj) => obj['name']"
+                label="Vendedor"
+                class="mb-n7"
+                color=""
+              ></v-combobox>
+            </v-col>
+            <v-col class="px-1">
+              <v-combobox
+                clearable
+                dense
+                :items="tecnicos.map((obj) => obj)"
+                :item-value="(obj) => obj['name']"
+                :item-text="(obj) => obj['name']"
+                label="Técnico"
+                class="mb-n7"
+                color=""
+              ></v-combobox>
+            </v-col>
+            <v-btn icon @click="filterExpanded = !filterExpanded">
+              <v-icon class="px-1"> mdi-close</v-icon>
+            </v-btn>
+          </div>
+          <v-btn v-else icon @click="filterExpanded = !filterExpanded">
+            <v-icon class="px-1">mdi-filter</v-icon>
+          </v-btn>
+        </v-slide-x-transition>
+
+        <v-divider class="mx-2" vertical inset></v-divider>
+
+        <v-btn icon>
+          <v-icon class="px-1">mdi-printer</v-icon>
+        </v-btn>
+
+        <v-divider class="mx-2" vertical inset></v-divider>
+
+        <v-btn icon>
+          <v-icon>mdi-dots-horizontal</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-dialog v-model="helperDialog" width="500">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
+              <v-icon class="">mdi-help-circle-outline</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              Precisa de Ajuda?
+            </v-card-title>
+
+            <v-card-text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="helperDialog = false">
+                ENTENDI
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+      <v-container class="fill-height pt-5" fluid>
+        <v-layout column style="height: 88.9vh">
+          <v-flex class="mb-0" style="overflow: auto">
+            <v-data-table
+              :headers="headers"
+              :items="ambientes"
+              :single-expand="singleExpand"
+              :expanded.sync="expanded"
+              item-key="Contrato"
+              show-expand
+              class="elevation-1"
+              style="width: 100vw; heigth: 100%"
+              @item-expanded="loadExplod"
+            >
+              <template v-slot:item="{ item, expand, isExpanded }">
+                <tr>
+                  <td class="text-start">{{ item.idLoja }}</td>
+                  <td class="text-start">{{ item.Cliente.idCliente }}</td>
+                  <td class="text-start">{{ item.Cliente.Nome }}</td>
+                  <td class="text-start">{{ item.Ambiente }}</td>
+                  <td class="text-start">{{ item.Contrato }}</td>
+                  <td class="text-center">{{ item.DataVenda }}</td>
+                  <td
+                    :class="
                       overdue(item.DataMedicao)
                         ? item.CLSDataMedicao != ''
-                          ? 'green'
-                          : 'red'
-                        : 'green'
+                          ? 'text-center green--text text--darken-4'
+                          : 'text-center red--text text--darken-4'
+                        : 'text-center'
                     "
-                    :content="item.ATDataMedicao"
-                    class="mb-2"
                   >
-                  </v-badge>
-                </td>
-                <td
-                  :class="
-                    overdue(item.DataTecnico)
-                      ? item.CLSDataTecnico != ''
-                        ? 'text-center green--text text--darken-4'
-                        : 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{
-                    item.CLSDataTecnico != ""
-                      ? item.CLSDataTecnico
-                      : item.DataTecnico
-                  }}
-                  <v-badge
-                    v-show="item.ATDataTecnico > 0"
-                    :color="
+                    {{
+                      item.CLSDataMedicao != ""
+                        ? item.CLSDataMedicao
+                        : item.DataMedicao
+                    }}
+                    <v-badge style="position: relative"
+                      v-show="item.ATDataMedicao > 0"
+                      :color="
+                        overdue(item.DataMedicao)
+                          ? item.CLSDataMedicao != ''
+                            ? 'green'
+                            : 'red'
+                          : 'green'
+                      "
+                      :content="item.ATDataMedicao"
+                      class="mb-2"
+                    >
+                    </v-badge>
+                  </td>
+                  <td
+                    :class="
                       overdue(item.DataTecnico)
                         ? item.CLSDataTecnico != ''
-                          ? 'green'
-                          : 'red'
-                        : 'green'
+                          ? 'text-center green--text text--darken-4'
+                          : 'text-center red--text text--darken-4'
+                        : 'text-center'
                     "
-                    :content="item.ATDataTecnico"
-                    class="mb-2"
                   >
-                  </v-badge>
-                </td>
-                <td
-                  :class="
-                    overdue(item.DataReuniao)
-                      ? item.CLSDataReuniao != ''
-                        ? 'text-center green--text text--darken-4'
-                        : 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{
-                    item.CLSDataReuniao != ""
-                      ? item.CLSDataReuniao
-                      : item.DataReuniao
-                  }}
-                  <v-badge
-                    v-show="item.ATDataReuniao > 0"
-                    :color="
+                    {{
+                      item.CLSDataTecnico != ""
+                        ? item.CLSDataTecnico
+                        : item.DataTecnico
+                    }}
+                    <v-badge style="position: relative"
+                      v-show="item.ATDataTecnico > 0"
+                      :color="
+                        overdue(item.DataTecnico)
+                          ? item.CLSDataTecnico != ''
+                            ? 'green'
+                            : 'red'
+                          : 'green'
+                      "
+                      :content="item.ATDataTecnico"
+                      class="mb-2"
+                    >
+                    </v-badge>
+                  </td>
+                  <td
+                    :class="
                       overdue(item.DataReuniao)
                         ? item.CLSDataReuniao != ''
-                          ? 'green'
-                          : 'red'
-                        : 'green'
+                          ? 'text-center green--text text--darken-4'
+                          : 'text-center red--text text--darken-4'
+                        : 'text-center'
                     "
-                    :content="item.ATDataReuniao"
-                    class="mb-2"
                   >
-                  </v-badge>
-                </td>
-                <td
-                  :class="
-                    overdue(item.DataAssinatura)
-                      ? item.CLSDataAssinatura != ''
-                        ? 'text-center green--text text--darken-4'
-                        : 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{
-                    item.CLSDataAssinatura != ""
-                      ? item.CLSDataAssinatura
-                      : item.DataAssinatura
-                  }}
-                  <v-badge
-                    v-show="item.ATDataAssinatura > 0"
-                    :color="
+                    {{
+                      item.CLSDataReuniao != ""
+                        ? item.CLSDataReuniao
+                        : item.DataReuniao
+                    }}
+                    <v-badge style="position: relative"
+                      v-show="item.ATDataReuniao > 0"
+                      :color="
+                        overdue(item.DataReuniao)
+                          ? item.CLSDataReuniao != ''
+                            ? 'green'
+                            : 'red'
+                          : 'green'
+                      "
+                      :content="item.ATDataReuniao"
+                      class="mb-2"
+                    >
+                    </v-badge>
+                  </td>
+                  <td
+                    :class="
                       overdue(item.DataAssinatura)
                         ? item.CLSDataAssinatura != ''
-                          ? 'green'
-                          : 'red'
-                        : 'green'
+                          ? 'text-center green--text text--darken-4'
+                          : 'text-center red--text text--darken-4'
+                        : 'text-center'
                     "
-                    :content="item.ATDataAssinatura"
-                    class="mb-2"
                   >
-                  </v-badge>
-                </td>
-                <td
-                  :class="
-                    overdue(item.DataProjetoTec)
-                      ? item.CLSDataProjetoTec != ''
-                        ? 'text-center green--text text--darken-4'
-                        : 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{
-                    item.CLSDataProjetoTec != ""
-                      ? item.CLSDataProjetoTec
-                      : item.DataProjetoTec
-                  }}
-                  <v-badge
-                    v-show="item.ATDataProjetoTec > 0"
-                    :color="
+                    {{
+                      item.CLSDataAssinatura != ""
+                        ? item.CLSDataAssinatura
+                        : item.DataAssinatura
+                    }}
+                    <v-badge style="position: relative"
+                      v-show="item.ATDataAssinatura > 0"
+                      :color="
+                        overdue(item.DataAssinatura)
+                          ? item.CLSDataAssinatura != ''
+                            ? 'green'
+                            : 'red'
+                          : 'green'
+                      "
+                      :content="item.ATDataAssinatura"
+                      class="mb-2"
+                    >
+                    </v-badge>
+                  </td>
+                  <td
+                    :class="
                       overdue(item.DataProjetoTec)
                         ? item.CLSDataProjetoTec != ''
-                          ? 'green'
-                          : 'red'
-                        : 'green'
+                          ? 'text-center green--text text--darken-4'
+                          : 'text-center red--text text--darken-4'
+                        : 'text-center'
                     "
-                    :content="item.ATDataProjetoTec"
-                    class="mb-2"
                   >
-                  </v-badge>
-                </td>
-                <td class="text-center">
-                  {{ item.CLSDataProjetoTec }}
-                </td>
-                <td
-                  :class="
-                    item.Atraso > 25
-                      ? 'text-center red--text text--darken-4'
-                      : 'text-center'
-                  "
-                >
-                  {{ item.Atraso }}
-                </td>
-                <td>
-                  <v-btn @click="expand(!isExpanded)" icon color="gray"
-                    ><v-icon class="">{{
-                      isExpanded ? "mdi-chevron-up" : "mdi-chevron-down"
-                    }}</v-icon></v-btn
-                  >
-                </td>
-              </tr>
-            </template>
-
-            <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length" class="px-0">
-                <template>
-                  <v-stepper
-                    v-model="stp"
-                    non-linear
-                    vertical
-                    style="background-color: #f0f0f0;"
-                  >
-                    <v-stepper-step
-                      :complete="item.CLSDataMedicao != ''"
-                      step="1"
-                      editable
-                      :edit-icon="
-                        item.CLSDataMedicao != ''
-                          ? 'mdi-check'
-                          : 'mdi-progress-clock'
-                      "
-                      :color="item.CLSDataMedicao != '' ? 'success' : 'primary'"
-                    >
-                      Medição
-                      <small>Data e Funcionário</small>
-                    </v-stepper-step>
-                    <v-stepper-content step="1">
-                      <v-card color="white" class="mb-12" height="40rem">
-                        <template class="d-flex flex-column">
-                          <v-col cols="12" class="float-left mt-5">
-                            <v-sheet tile height="60" class="d-flex">
-                              <v-btn
-                                icon
-                                class="ma-2"
-                                @click="$refs.calendar.prev()"
-                              >
-                                <v-icon>mdi-chevron-left</v-icon>
-                              </v-btn>
-                              <v-spacer></v-spacer>
-                              <h2 full-width class="mt-2">
-                                Agenda Geral de Medição
-                              </h2>
-                              <v-spacer></v-spacer>
-
-                              <v-autocomplete
-                                label="Medidores"
-                                class="pr-5"
-                                solo
-                                :items="medidores.map((obj) => obj)"
-                                :item-value="(obj) => obj['name']"
-                                :item-text="(obj) => obj['name']"
-                              ></v-autocomplete>
-
-                              <v-btn color="primary" @click="stp = 2" x-large>
-                                Agendar
-                              </v-btn>
-                              <v-btn
-                                icon
-                                class="ma-2"
-                                @click="$refs.calendar.next()"
-                              >
-                                <v-icon>mdi-chevron-right</v-icon>
-                              </v-btn>
-                            </v-sheet>
-                            <v-sheet height="450">
-                              <v-calendar
-                                ref="calendar"
-                                v-model="value"
-                                locale="pt-BR"
-                                :weekdays="weekday"
-                                :type="type"
-                                :events="events"
-                                :event-overlap-mode="mode"
-                                :event-overlap-threshold="30"
-                                :event-color="getEventColor"
-                                @change="getEvents"
-                              ></v-calendar>
-                            </v-sheet>
-                            <v-btn
-                              color="success"
-                              @click="stp = 2"
-                              large
-                              class="mt-6"
-                              style="width:100%"
-                            >
-                              Concluir Medição
-                            </v-btn>
-                          </v-col>
-                        </template>
-                      </v-card>
-                      <v-btn
-                        x-medium
-                        fab
-                        primary
-                        color="primary"
-                        @click="stp = 2"
-                      >
-                        <v-icon class>mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </v-stepper-content>
-
-                    <v-stepper-step
-                      :complete="item.CLSDataTecnico != ''"
-                      step="2"
-                      editable
-                      :edit-icon="
-                        item.CLSDataTecnico != ''
-                          ? 'mdi-check'
-                          : 'mdi-progress-clock'
-                      "
-                      :color="item.CLSDataTecnico != '' ? 'success' : 'primary'"
-                    >
-                      Atribuir Técnico
-                    </v-stepper-step>
-                    <v-stepper-content step="2">
-                      <v-card
-                        color="gray lighten-1"
-                        class="mb-12"
-                        height="100%"
-                      >
-                        <template class="d-flex flex-column">
-                          <v-col class="py-5" cols="12" sm="12" md="12">
-                            <v-autocomplete
-                              label="Técnicos"
-                              solo
-                              :items="tecnicos.map((obj) => obj)"
-                              :item-value="(obj) => obj['name']"
-                              :item-text="
-                                (obj) =>
-                                  obj['name'] +
-                                  ' - ' +
-                                  obj['ambientesExec'] +
-                                  ' em Andamento'
-                              "
-                            ></v-autocomplete>
-                            <v-btn
-                              color="primary"
-                              @click="stp = 3"
-                              style="width:100%"
-                              large
-                            >
-                              ATRIBUIR TÉCNICO
-                            </v-btn>
-
-                            <v-btn
-                              color="success"
-                              @click="stp = 3"
-                              class="mt-6"
-                              style="width:100%"
-                              large
-                            >
-                              Concluir Etapa
-                            </v-btn>
-                          </v-col>
-                        </template>
-                      </v-card>
-                      <v-btn
-                        x-medium
-                        fab
-                        primary
-                        color="primary"
-                        @click="stp = 3"
-                      >
-                        <v-icon class>mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </v-stepper-content>
-
-                    <v-stepper-step
-                      :complete="item.CLSDataReuniao != ''"
-                      step="3"
-                      editable
-                      :edit-icon="
-                        item.CLSDataReuniao != ''
-                          ? 'mdi-check'
-                          : 'mdi-progress-clock'
-                      "
-                      :color="item.CLSDataReuniao != '' ? 'success' : 'primary'"
-                    >
-                      Reunião
-                      <small>Data e Envolvidos</small>
-                    </v-stepper-step>
-                    <v-stepper-content step="3">
-                      <v-card color="white" class="mb-12" height="40rem">
-                        <template class="d-flex flex-column">
-                          <v-col cols="12 mt-5" class="float-left ">
-                            <v-sheet tile height="60" class="d-flex">
-                              <v-btn
-                                icon
-                                class="ma-2"
-                                @click="$refs.calendar.prev()"
-                              >
-                                <v-icon>mdi-chevron-left</v-icon>
-                              </v-btn>
-                              <v-spacer></v-spacer>
-                              <h2 full-width>Agenda Geral de Reuniões</h2>
-                              <v-spacer></v-spacer>
-                              <v-autocomplete
-                                v-model="interessados"
-                                :items="funcionariosGeral"
-                                chips
-                                deletable-chips
-                                item-text="name"
-                                item-value="name"
-                                multiple
-                                solo
-                                label="Envolvidos"
-                                class="pr-5"
-                              >
-                                <template v-slot:selection="data">
-                                  <v-chip
-                                    v-bind="data.attrs"
-                                    :input-value="data.selected"
-                                    close
-                                    @click="data.select"
-                                    @click:close="remove(data.item)"
-                                  >
-                                    {{ data.item.name }}
-                                  </v-chip>
-                                </template>
-                                <template v-slot:item="data">
-                                  <template
-                                    v-if="typeof data.item !== 'object'"
-                                  >
-                                    <v-list-item-content
-                                      v-text="data.item"
-                                    ></v-list-item-content>
-                                  </template>
-                                  <template v-else>
-                                    <v-list-item-content>
-                                      <v-list-item-title
-                                        class="text-left"
-                                        v-html="data.item.name"
-                                      ></v-list-item-title>
-                                      <v-list-item-subtitle
-                                        class="text-left"
-                                        v-html="data.item.group"
-                                      ></v-list-item-subtitle>
-                                    </v-list-item-content>
-                                  </template>
-                                </template>
-                              </v-autocomplete>
-                              <v-btn x-large color="primary" @click="stp = 4">
-                                Agendar
-                              </v-btn>
-
-                              <v-btn
-                                icon
-                                class="ma-2"
-                                @click="$refs.calendar.next()"
-                              >
-                                <v-icon>mdi-chevron-right</v-icon>
-                              </v-btn>
-                            </v-sheet>
-                            <v-sheet height="450">
-                              <v-calendar
-                                ref="calendar"
-                                v-model="value"
-                                locale="pt-BR"
-                                :weekdays="weekday"
-                                :type="type"
-                                :events="events"
-                                :event-overlap-mode="mode"
-                                :event-overlap-threshold="30"
-                                :event-color="getEventColor"
-                                @change="getEvents"
-                              ></v-calendar>
-                            </v-sheet>
-                            <v-btn
-                              color="success"
-                              @click="stp = 4"
-                              class="mt-6"
-                              style="width:100%"
-                              large
-                            >
-                              Concluir Reunião
-                            </v-btn>
-                          </v-col>
-                        </template>
-                      </v-card>
-                      <v-btn
-                        x-medium
-                        fab
-                        primary
-                        color="primary"
-                        @click="stp = 4"
-                      >
-                        <v-icon class>mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </v-stepper-content>
-
-                    <v-stepper-step
-                      :complete="item.CLSDataAssinatura != ''"
-                      step="4"
-                      editable
-                      :edit-icon="
-                        item.CLSDataAssinatura != ''
-                          ? 'mdi-check'
-                          : 'mdi-progress-clock'
-                      "
+                    {{
+                      item.CLSDataProjetoTec != ""
+                        ? item.CLSDataProjetoTec
+                        : item.DataProjetoTec
+                    }}
+                    <v-badge style="position: relative"
+                      v-show="item.ATDataProjetoTec > 0"
                       :color="
-                        item.CLSDataAssinatura != '' ? 'success' : 'primary'
+                        overdue(item.DataProjetoTec)
+                          ? item.CLSDataProjetoTec != ''
+                            ? 'green'
+                            : 'red'
+                          : 'green'
                       "
+                      :content="item.ATDataProjetoTec"
+                      class="mb-2"
                     >
-                      Assinatura
-                    </v-stepper-step>
-                    <v-stepper-content step="4">
-                      <v-card color="white" class="pa-3 mb-12" height="100%">
-                        <v-row>
-                          <v-col cols="4" class="float-left pt-3 pr-10">
-                            <v-spacer></v-spacer>
-                            <h2 class="mb-3">Assinatura</h2>
-                            <v-spacer></v-spacer>
-                            <v-expansion-panels popout class="mb-3">
-                              <v-expansion-panel>
-                                <v-expansion-panel-header
-                                  >Dados de Contato</v-expansion-panel-header
+                    </v-badge>
+                  </td>
+                  <td class="text-center">
+                    {{ item.CLSDataProjetoTec }}
+                  </td>
+                  <td
+                    :class="
+                      item.Atraso > 25
+                        ? 'text-center red--text text--darken-4'
+                        : 'text-center'
+                    "
+                  >
+                    {{ item.Atraso }}
+                  </td>
+                  <td>
+                    <v-btn @click="expand(!isExpanded)" icon color="gray"
+                      ><v-icon class="">{{
+                        isExpanded ? "mdi-chevron-up" : "mdi-chevron-down"
+                      }}</v-icon></v-btn
+                    >
+                  </td>
+                </tr>
+              </template>
+
+              <template v-slot:expanded-item="{ headers, item }">
+                <td :colspan="headers.length" class="px-0">
+                  <template>
+                    <v-stepper
+                      v-model="stp"
+                      non-linear
+                      vertical
+                      style="background-color: #f0f0f0"
+                    >
+                      <v-stepper-step
+                        :complete="item.CLSDataMedicao != ''"
+                        step="1"
+                        editable
+                        :edit-icon="
+                          item.CLSDataMedicao != ''
+                            ? 'mdi-check'
+                            : 'mdi-progress-clock'
+                        "
+                        :color="
+                          item.CLSDataMedicao != '' ? 'success' : 'primary'
+                        "
+                      >
+                        Medição
+                        <small>Data e Funcionário</small>
+                      </v-stepper-step>
+                      <v-stepper-content step="1">
+                        <v-card color="white" class="mb-12" height="40rem">
+                          <template class="d-flex flex-column">
+                            <v-col cols="12" class="float-left mt-5">
+                              <v-sheet tile height="60" class="d-flex">
+                                <v-btn
+                                  icon
+                                  class="ma-2"
+                                  @click="$refs.calendar.prev()"
                                 >
-                                <v-expansion-panel-content>
-                                  <v-form ref="form">
-                                    <v-text-field
-                                      label="Nome"
-                                      value="Fulano de Tal"
-                                      disabled
-                                    ></v-text-field>
-                                    <v-text-field
-                                      label="E-mail"
-                                      value="teste@teste.com"
-                                      disabled
-                                    ></v-text-field>
-                                    <v-text-field
-                                      label="Telefone"
-                                      value="(14) 3452-6289"
-                                      disabled
-                                    ></v-text-field>
-                                    <v-text-field
-                                      label="Celular"
-                                      value="(14) 99785-6289"
-                                      disabled
-                                    ></v-text-field>
-                                  </v-form>
-                                </v-expansion-panel-content>
-                              </v-expansion-panel>
-                            </v-expansion-panels>
-                            <v-label>Data da Assinatura</v-label>
-                            <v-menu
-                              ref="menu"
-                              v-model="menu"
-                              :close-on-content-click="false"
-                              :return-value.sync="date"
-                              transition="scale-transition"
-                              offset-y
-                              min-width="290px"
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                  v-model="date"
-                                  label="Selecione uma data"
-                                  prepend-icon="mdi-calendar"
-                                  hint="DD/MM/YYYY format"
-                                  readonly
-                                  v-bind="attrs"
-                                  v-on="on"
-                                ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                v-model="date"
-                                locale="pt-BR"
-                                no-title
-                                scrollable
-                              >
+                                  <v-icon>mdi-chevron-left</v-icon>
+                                </v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="menu = false"
-                                >
-                                  Cancelar
+                                <h2 full-width class="mt-2">
+                                  Agenda Geral de Medição
+                                </h2>
+                                <v-spacer></v-spacer>
+
+                                <v-autocomplete
+                                  label="Medidores"
+                                  class="pr-5"
+                                  solo
+                                  :items="medidores.map((obj) => obj)"
+                                  :item-value="(obj) => obj['name']"
+                                  :item-text="(obj) => obj['name']"
+                                ></v-autocomplete>
+
+                                <v-btn color="primary" @click="stp = 2" x-large>
+                                  Agendar
                                 </v-btn>
                                 <v-btn
-                                  text
-                                  color="primary"
-                                  @click="$refs.menu.save(date)"
+                                  icon
+                                  class="ma-2"
+                                  @click="$refs.calendar.next()"
                                 >
-                                  OK
+                                  <v-icon>mdi-chevron-right</v-icon>
                                 </v-btn>
-                              </v-date-picker>
-                            </v-menu>
+                              </v-sheet>
+                              <v-sheet height="450">
+                                <v-calendar
+                                  ref="calendar"
+                                  v-model="value"
+                                  locale="pt-BR"
+                                  :weekdays="weekday"
+                                  :type="type"
+                                  :events="events"
+                                  :event-overlap-mode="mode"
+                                  :event-overlap-threshold="30"
+                                  :event-color="getEventColor"
+                                  @change="getEvents"
+                                ></v-calendar>
+                              </v-sheet>
+                              <v-btn
+                                color="success"
+                                @click="stp = 2"
+                                large
+                                class="mt-6"
+                                style="width: 100%"
+                              >
+                                Concluir Medição
+                              </v-btn>
+                            </v-col>
+                          </template>
+                        </v-card>
+                        <v-btn
+                          x-medium
+                          fab
+                          primary
+                          color="primary"
+                          @click="stp = 2"
+                        >
+                          <v-icon class>mdi-chevron-down</v-icon>
+                        </v-btn>
+                      </v-stepper-content>
 
-                            <v-btn
-                              color="primary"
-                              large
-                              @click="stp = 5"
-                              style="width:100%"
-                            >
-                              Agendar
-                            </v-btn>
+                      <v-stepper-step
+                        :complete="item.CLSDataTecnico != ''"
+                        step="2"
+                        editable
+                        :edit-icon="
+                          item.CLSDataTecnico != ''
+                            ? 'mdi-check'
+                            : 'mdi-progress-clock'
+                        "
+                        :color="
+                          item.CLSDataTecnico != '' ? 'success' : 'primary'
+                        "
+                      >
+                        Atribuir Técnico
+                      </v-stepper-step>
+                      <v-stepper-content step="2">
+                        <v-card
+                          color="gray lighten-1"
+                          class="mb-12"
+                          height="100%"
+                        >
+                          <template class="d-flex flex-column">
+                            <v-col class="py-5" cols="12" sm="12" md="12">
+                              <v-autocomplete
+                                label="Técnicos"
+                                solo
+                                :items="tecnicos.map((obj) => obj)"
+                                :item-value="(obj) => obj['name']"
+                                :item-text="
+                                  (obj) =>
+                                    obj['name'] +
+                                    ' - ' +
+                                    obj['ambientesExec'] +
+                                    ' em Andamento'
+                                "
+                              ></v-autocomplete>
+                              <v-btn
+                                color="primary"
+                                @click="stp = 3"
+                                style="width: 100%"
+                                large
+                              >
+                                ATRIBUIR TÉCNICO
+                              </v-btn>
 
-                            <v-btn
-                              color="success"
-                              large
-                              @click="stp = 5"
-                              class="mt-6"
-                              style="width:100%"
-                            >
-                              Concluir Assinatura
-                            </v-btn>
-                          </v-col>
-                          <v-col cols="8">
-                            <v-simple-table style="height: 20rem">
-                              <template v-slot:default>
-                                <thead>
-                                  <tr>
-                                    <th class="text-left">
-                                      Tentativa
-                                    </th>
-                                    <th class="text-left">
-                                      Data
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <!-- <tr v-for="item in explod.cliente.contatos" :key="item.tentativa">
+                              <v-btn
+                                color="success"
+                                @click="stp = 3"
+                                class="mt-6"
+                                style="width: 100%"
+                                large
+                              >
+                                Concluir Etapa
+                              </v-btn>
+                            </v-col>
+                          </template>
+                        </v-card>
+                        <v-btn
+                          x-medium
+                          fab
+                          primary
+                          color="primary"
+                          @click="stp = 3"
+                        >
+                          <v-icon class>mdi-chevron-down</v-icon>
+                        </v-btn>
+                      </v-stepper-content>
+
+                      <v-stepper-step
+                        :complete="item.CLSDataReuniao != ''"
+                        step="3"
+                        editable
+                        :edit-icon="
+                          item.CLSDataReuniao != ''
+                            ? 'mdi-check'
+                            : 'mdi-progress-clock'
+                        "
+                        :color="
+                          item.CLSDataReuniao != '' ? 'success' : 'primary'
+                        "
+                      >
+                        Reunião
+                        <small>Data e Envolvidos</small>
+                      </v-stepper-step>
+                      <v-stepper-content step="3">
+                        <v-card color="white" class="mb-12" height="40rem">
+                          <template class="d-flex flex-column">
+                            <v-col cols="12 mt-5" class="float-left">
+                              <v-sheet tile height="60" class="d-flex">
+                                <v-btn
+                                  icon
+                                  class="ma-2"
+                                  @click="$refs.calendar.prev()"
+                                >
+                                  <v-icon>mdi-chevron-left</v-icon>
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <h2 full-width>Agenda Geral de Reuniões</h2>
+                                <v-spacer></v-spacer>
+                                <v-autocomplete
+                                  v-model="interessados"
+                                  :items="funcionariosGeral"
+                                  chips
+                                  deletable-chips
+                                  item-text="name"
+                                  item-value="name"
+                                  multiple
+                                  solo
+                                  label="Envolvidos"
+                                  class="pr-5"
+                                >
+                                  <template v-slot:selection="data">
+                                    <v-chip
+                                      v-bind="data.attrs"
+                                      :input-value="data.selected"
+                                      close
+                                      @click="data.select"
+                                      @click:close="remove(data.item)"
+                                    >
+                                      {{ data.item.name }}
+                                    </v-chip>
+                                  </template>
+                                  <template v-slot:item="data">
+                                    <template
+                                      v-if="typeof data.item !== 'object'"
+                                    >
+                                      <v-list-item-content
+                                        v-text="data.item"
+                                      ></v-list-item-content>
+                                    </template>
+                                    <template v-else>
+                                      <v-list-item-content>
+                                        <v-list-item-title
+                                          class="text-left"
+                                          v-html="data.item.name"
+                                        ></v-list-item-title>
+                                        <v-list-item-subtitle
+                                          class="text-left"
+                                          v-html="data.item.group"
+                                        ></v-list-item-subtitle>
+                                      </v-list-item-content>
+                                    </template>
+                                  </template>
+                                </v-autocomplete>
+                                <v-btn x-large color="primary" @click="stp = 4">
+                                  Agendar
+                                </v-btn>
+
+                                <v-btn
+                                  icon
+                                  class="ma-2"
+                                  @click="$refs.calendar.next()"
+                                >
+                                  <v-icon>mdi-chevron-right</v-icon>
+                                </v-btn>
+                              </v-sheet>
+                              <v-sheet height="450">
+                                <v-calendar
+                                  ref="calendar"
+                                  v-model="value"
+                                  locale="pt-BR"
+                                  :weekdays="weekday"
+                                  :type="type"
+                                  :events="events"
+                                  :event-overlap-mode="mode"
+                                  :event-overlap-threshold="30"
+                                  :event-color="getEventColor"
+                                  @change="getEvents"
+                                ></v-calendar>
+                              </v-sheet>
+                              <v-btn
+                                color="success"
+                                @click="stp = 4"
+                                class="mt-6"
+                                style="width: 100%"
+                                large
+                              >
+                                Concluir Reunião
+                              </v-btn>
+                            </v-col>
+                          </template>
+                        </v-card>
+                        <v-btn
+                          x-medium
+                          fab
+                          primary
+                          color="primary"
+                          @click="stp = 4"
+                        >
+                          <v-icon class>mdi-chevron-down</v-icon>
+                        </v-btn>
+                      </v-stepper-content>
+
+                      <v-stepper-step
+                        :complete="item.CLSDataAssinatura != ''"
+                        step="4"
+                        editable
+                        :edit-icon="
+                          item.CLSDataAssinatura != ''
+                            ? 'mdi-check'
+                            : 'mdi-progress-clock'
+                        "
+                        :color="
+                          item.CLSDataAssinatura != '' ? 'success' : 'primary'
+                        "
+                      >
+                        Assinatura
+                      </v-stepper-step>
+                      <v-stepper-content step="4">
+                        <v-card color="white" class="pa-3 mb-12" height="100%">
+                          <v-row>
+                            <v-col cols="4" class="float-left pt-3 pr-10">
+                              <v-spacer></v-spacer>
+                              <h2 class="mb-3">Assinatura</h2>
+                              <v-spacer></v-spacer>
+                              <v-expansion-panels popout class="mb-3">
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header
+                                    >Dados de Contato</v-expansion-panel-header
+                                  >
+                                  <v-expansion-panel-content>
+                                    <v-form ref="form">
+                                      <v-text-field
+                                        label="Nome"
+                                        value="Fulano de Tal"
+                                        disabled
+                                      ></v-text-field>
+                                      <v-text-field
+                                        label="E-mail"
+                                        value="teste@teste.com"
+                                        disabled
+                                      ></v-text-field>
+                                      <v-text-field
+                                        label="Telefone"
+                                        value="(14) 3452-6289"
+                                        disabled
+                                      ></v-text-field>
+                                      <v-text-field
+                                        label="Celular"
+                                        value="(14) 99785-6289"
+                                        disabled
+                                      ></v-text-field>
+                                    </v-form>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                              </v-expansion-panels>
+                              <v-label>Data da Assinatura</v-label>
+                              <v-menu
+                                ref="menu"
+                                v-model="menu"
+                                :close-on-content-click="false"
+                                :return-value.sync="date"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="290px"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="date"
+                                    label="Selecione uma data"
+                                    prepend-icon="mdi-calendar"
+                                    hint="DD/MM/YYYY format"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="date"
+                                  locale="pt-BR"
+                                  no-title
+                                  scrollable
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="menu = false"
+                                  >
+                                    Cancelar
+                                  </v-btn>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="$refs.menu.save(date)"
+                                  >
+                                    OK
+                                  </v-btn>
+                                </v-date-picker>
+                              </v-menu>
+
+                              <v-btn
+                                color="primary"
+                                large
+                                @click="stp = 5"
+                                style="width: 100%"
+                              >
+                                Agendar
+                              </v-btn>
+
+                              <v-btn
+                                color="success"
+                                large
+                                @click="stp = 5"
+                                class="mt-6"
+                                style="width: 100%"
+                              >
+                                Concluir Assinatura
+                              </v-btn>
+                            </v-col>
+                            <v-col cols="8">
+                              <v-simple-table style="height: 20rem">
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">Tentativa</th>
+                                      <th class="text-left">Data</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <!-- <tr v-for="item in explod.cliente.contatos" :key="item.tentativa">
                               <td>{{ item.tentativa }}</td>
                               <td>{{ item.data }}</td>
                             </tr> -->
-                                  <tr>
-                                    <td></td>
-                                    <td></td>
-                                  </tr>
-                                </tbody>
-                              </template>
-                            </v-simple-table>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                      <v-btn
-                        x-medium
-                        fab
-                        primary
-                        color="primary"
-                        @click="stp = 5"
-                      >
-                        <v-icon class>mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </v-stepper-content>
-
-                    <v-stepper-step
-                      :complete="item.CLSDataProjetoTec != ''"
-                      step="5"
-                      editable
-                      :edit-icon="
-                        item.CLSDataProjetoTec != ''
-                          ? 'mdi-check'
-                          : 'mdi-progress-clock'
-                      "
-                      :color="
-                        item.CLSDataProjetoTec != '' ? 'success' : 'primary'
-                      "
-                    >
-                      Projeto Técnico
-                    </v-stepper-step>
-                    <v-stepper-content step="5">
-                      <v-card color="white" class="pa-3 mb-12" height="100%">
+                                    <tr>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-col>
+                          </v-row>
+                        </v-card>
                         <v-btn
-                          color="success"
-                          large
-                          @click="stp = 6"
-                          class="mt-6"
-                          style="width:100%"
+                          x-medium
+                          fab
+                          primary
+                          color="primary"
+                          @click="stp = 5"
                         >
-                          Concluir Projeto Executivo
-                        </v-btn></v-card
+                          <v-icon class>mdi-chevron-down</v-icon>
+                        </v-btn>
+                      </v-stepper-content>
+
+                      <v-stepper-step
+                        :complete="item.CLSDataProjetoTec != ''"
+                        step="5"
+                        editable
+                        :edit-icon="
+                          item.CLSDataProjetoTec != ''
+                            ? 'mdi-check'
+                            : 'mdi-progress-clock'
+                        "
+                        :color="
+                          item.CLSDataProjetoTec != '' ? 'success' : 'primary'
+                        "
                       >
-                      <v-btn
-                        x-medium
-                        fab
-                        primary
-                        color="primary"
-                        @click="stp = 6"
-                      >
-                        <v-icon class>mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </v-stepper-content>
-                  </v-stepper>
-                </template>
-              </td>
-            </template>
-          </v-data-table>
-        </div>
+                        Projeto Técnico
+                      </v-stepper-step>
+                      <v-stepper-content step="5">
+                        <v-card color="white" class="pa-3 mb-12" height="100%">
+                          <v-btn
+                            color="success"
+                            large
+                            @click="stp = 6"
+                            class="mt-6"
+                            style="width: 100%"
+                          >
+                            Concluir Projeto Executivo
+                          </v-btn></v-card
+                        >
+                        <v-btn
+                          x-medium
+                          fab
+                          primary
+                          color="primary"
+                          @click="stp = 6"
+                        >
+                          <v-icon class>mdi-chevron-down</v-icon>
+                        </v-btn>
+                      </v-stepper-content>
+                    </v-stepper>
+                  </template>
+                </td>
+              </template>
+            </v-data-table>
+          </v-flex>
+        </v-layout>
       </v-container>
     </v-main>
   </v-app>
@@ -678,6 +804,9 @@
 export default {
   data() {
     return {
+      searchExpanded: false,
+      filterExpanded: false,
+      helperDialog: false,
       expanded: [],
       singleExpand: true,
       stp: 0,
@@ -923,7 +1052,7 @@ export default {
   computed: {
     computedDateFormattedMedicao: {
       // getter
-      get: function() {
+      get: function () {
         return this.formatDate(
           this.explodItem.CLSDataMedicao != ""
             ? this.explodItem.CLSDataMedicao
@@ -931,7 +1060,7 @@ export default {
         );
       },
       // setter
-      set: function(newValue) {
+      set: function (newValue) {
         return this.formatDatePTBR(newValue);
       },
     },
