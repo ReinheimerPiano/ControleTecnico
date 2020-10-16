@@ -5,7 +5,6 @@
         <v-slide-x-transition mode="out-in">
           <v-col v-if="searchExpanded" cols="4" class="ml-1">
             <v-combobox
-              color="white "
               label="Nome"
               class="mb-n7 rounded-0 rounded-l"
               style="float: left; width: 8rem; line-height: 2rem !important"
