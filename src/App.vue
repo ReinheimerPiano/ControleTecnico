@@ -1,15 +1,15 @@
 <template>
   <div id="app" style="margin: 0px !important;">
-    <Ctrl></Ctrl>
+    <controle-tecnico></controle-tecnico>
   </div>
 </template>
 
 <script>
-import Ctrl from './components/CtrlTec'
+import ControleTecnico from './screens/controleTecnico/ControleTecnico'
 export default {
   name: 'App',
   components:{
-    Ctrl
+    ControleTecnico
   }
 }
 </script>

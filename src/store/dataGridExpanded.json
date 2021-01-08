@@ -1,0 +1,19 @@
+[{
+  "PRO_Emp": 116,
+  "PRO_Loja": 2009,
+  "PRO_Opcao": "AH",
+  "PRO_Ambiente": "SOFÁ 3 LUGARES RETRÁTIL KENNED",
+  "OBJ_Cliente": [{
+    "CLI_Codigo": 3246,
+    "CLI_Nome": "TESTE2",
+    "CLI_Email": "teste@gmail.com",
+    "CLI_CorFone1": "326156",
+    "CLI_CorFone2": "952626"
+  }],
+  "PRO_Contrato": 1002322,
+  "VME_DataVenda": "2020-11-30T00:00:00",
+  "Agendamento_Medicao": null,
+  "Agendamento_VisitaTecnica": null,
+  "Agendamento_Reuniao": null,
+  "Agendamento_ProjetoTecnico": null
+}]

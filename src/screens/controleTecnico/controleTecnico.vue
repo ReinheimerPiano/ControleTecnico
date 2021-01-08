@@ -1,290 +1,311 @@
 <template>
   <v-app id="inspire">
-    <v-main>
-      <v-toolbar color="grey lighten-5" style="width:100vw; position: fixed; z-index: 100;" dense elevation="0">
-        <v-slide-x-transition mode="out-in">
-          <v-col v-if="searchExpanded" cols="4" class="ml-1">
-            <v-combobox
-              label="Nome"
-              class="mb-n7 rounded-0 rounded-l"
-              style="float: left; width: 8rem; line-height: 2rem !important"
-            ></v-combobox>
-            <v-text-field
-              append-icon="mdi-close"
-              @click:append="searchExpanded = !searchExpanded"
-              label="Pesquisar"
-              class="mb-n7 rounded-0 rounded-r"
-              style="line-height: 2rem"
-            >
-            </v-text-field>
-          </v-col>
-          <v-btn
-            v-else
-            icon
-            @click="searchExpanded = !searchExpanded"
-            class="ml-1"
+    <v-toolbar
+      color="grey lighten-5"
+      style="width: 100vw; position: fixed"
+      dense
+      elevation="0"
+      absolute
+    >
+      <v-slide-x-transition mode="out-in">
+        <v-col v-if="searchExpanded" cols="4" class="ml-1">
+          <v-combobox
+            label="Nome"
+            class="mb-n7 rounded-0 rounded-l"
+            style="float: left; width: 8rem; line-height: 2rem !important"
+          ></v-combobox>
+          <v-text-field
+            append-icon="mdi-close"
+            @click:append="searchExpanded = !searchExpanded"
+            label="Pesquisar"
+            class="mb-n7 rounded-0 rounded-r"
+            style="line-height: 2rem"
           >
-            <v-icon class="">mdi-magnify</v-icon>
-          </v-btn>
-        </v-slide-x-transition>
-
-        <v-divider class="mx-2" vertical inset></v-divider>
-
-        <v-slide-x-transition mode="out-in">
-          <div v-if="filterExpanded" class="d-flex" cols="3">
-            <v-col class="px-1">
-              <v-combobox
-                clearable
-                dense
-                :items="ambientes.map((obj) => obj)"
-                :item-value="(obj) => obj['Cliente'].Nome"
-                :item-text="(obj) => obj['Cliente'].Nome"
-                label="Clientes"
-                class="mb-n7"
-                color=""
-              ></v-combobox>
-            </v-col>
-            <v-col class="px-1">
-              <v-combobox
-                clearable
-                dense
-                :items="tecnicos.map((obj) => obj)"
-                :item-value="(obj) => obj['name']"
-                :item-text="(obj) => obj['name']"
-                label="Vendedor"
-                class="mb-n7"
-                color=""
-              ></v-combobox>
-            </v-col>
-            <v-col class="px-1">
-              <v-combobox
-                clearable
-                dense
-                :items="tecnicos.map((obj) => obj)"
-                :item-value="(obj) => obj['name']"
-                :item-text="(obj) => obj['name']"
-                label="Técnico"
-                class="mb-n7"
-                color=""
-              ></v-combobox>
-            </v-col>
-            <v-btn icon @click="filterExpanded = !filterExpanded">
-              <v-icon class="px-1"> mdi-close</v-icon>
-            </v-btn>
-          </div>
-          <v-btn v-else icon @click="filterExpanded = !filterExpanded">
-            <v-icon class="px-1">mdi-filter</v-icon>
-          </v-btn>
-        </v-slide-x-transition>
-
-        <v-divider class="mx-2" vertical inset></v-divider>
-
-        <v-btn icon>
-          <v-icon class="px-1">mdi-printer</v-icon>
+          </v-text-field>
+        </v-col>
+        <v-btn
+          v-else
+          icon
+          @click="searchExpanded = !searchExpanded"
+          class="ml-1"
+        >
+          <v-icon class="">mdi-magnify</v-icon>
         </v-btn>
+      </v-slide-x-transition>
 
-        <v-divider class="mx-2" vertical inset></v-divider>
+      <v-divider class="mx-2" vertical inset></v-divider>
 
-        <v-btn icon>
-          <v-icon>mdi-dots-horizontal</v-icon>
+      <v-slide-x-transition mode="out-in">
+        <div v-if="filterExpanded" class="d-flex" cols="3">
+          <v-col class="px-1">
+            <v-combobox
+              clearable
+              dense
+              :items="eventos.map((obj) => obj)"
+              :item-value="(obj) => obj['Cliente'].Nome"
+              :item-text="(obj) => obj['Cliente'].Nome"
+              label="Clientes"
+              class="mb-n7"
+              color=""
+            ></v-combobox>
+          </v-col>
+          <v-col class="px-1">
+            <v-combobox
+              clearable
+              dense
+              :items="tecnicos.map((obj) => obj)"
+              :item-value="(obj) => obj['name']"
+              :item-text="(obj) => obj['name']"
+              label="Vendedor"
+              class="mb-n7"
+              color=""
+            ></v-combobox>
+          </v-col>
+          <v-col class="px-1">
+            <v-combobox
+              clearable
+              dense
+              :items="tecnicos.map((obj) => obj)"
+              :item-value="(obj) => obj['name']"
+              :item-text="(obj) => obj['name']"
+              label="Técnico"
+              class="mb-n7"
+              color=""
+            ></v-combobox>
+          </v-col>
+          <v-btn icon @click="filterExpanded = !filterExpanded">
+            <v-icon class="px-1"> mdi-close</v-icon>
+          </v-btn>
+        </div>
+        <v-btn v-else icon @click="filterExpanded = !filterExpanded">
+          <v-icon class="px-1">mdi-filter</v-icon>
         </v-btn>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="helperDialog" width="500">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
-              <v-icon class="">mdi-help-circle-outline</v-icon>
+      </v-slide-x-transition>
+
+      <v-divider class="mx-2" vertical inset></v-divider>
+
+      <v-btn icon>
+        <v-icon class="px-1">mdi-printer</v-icon>
+      </v-btn>
+
+      <v-divider class="mx-2" vertical inset></v-divider>
+
+      <v-btn icon>
+        <v-icon>mdi-dots-horizontal</v-icon>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <v-dialog v-model="helperDialog" width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
+            <v-icon class="">mdi-help-circle-outline</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="headline grey lighten-2">
+            Precisa de Ajuda?
+          </v-card-title>
+
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="helperDialog = false">
+              ENTENDI
             </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="headline grey lighten-2">
-              Precisa de Ajuda?
-            </v-card-title>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-btn icon @click.stop="drawer = !drawer" class="mx-1">
+        <v-icon class="">mdi-cog-outline</v-icon>
+      </v-btn>
+    </v-toolbar>
 
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </v-card-text>
-
-            <v-divider></v-divider>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="helperDialog = false">
-                ENTENDI
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-      <v-container class="fill-height pt-5" fluid>
+    <v-main>
+      <v-container class="fill-height overflow-hidden pt-5" fluid style="position: relative;">
         <v-layout column style="height: 88.9vh">
           <v-flex class="mb-0" style="overflow: auto">
             <v-data-table
               :headers="headers"
-              :items="ambientes"
+              :items="eventos"
               :single-expand="singleExpand"
               :expanded.sync="expanded"
-              item-key="Contrato"
+              item-key="PRO_Contrato"
               show-expand
               class="elevation-1"
               style="width: 100vw; heigth: 100%"
-              @item-expanded="loadExplod"
+              @item-expanded="loadExpanded"
+              :footer-props="{itemsPerPageText: 'Linhas por Página'}"
             >
               <template v-slot:item="{ item, expand, isExpanded }">
                 <tr>
-                  <td class="text-start">{{ item.idLoja }}</td>
-                  <td class="text-start">{{ item.Cliente.idCliente }}</td>
-                  <td class="text-start">{{ item.Cliente.Nome }}</td>
-                  <td class="text-start">{{ item.Ambiente }}</td>
-                  <td class="text-start">{{ item.Contrato }}</td>
-                  <td class="text-center">{{ item.DataVenda }}</td>
+                  <td class="text-start">{{ item.PRO_Emp }}</td>
+                  <td class="text-start">{{ item.PRO_Loja }}</td>
+                  <td class="text-start">{{ item.PRO_Cliente }}</td>
+                  <td class="text-start">{{ item.CLI_Nome }}</td>
+                  <td class="text-start">{{ item.Ambientes }}</td>
+                  <td class="text-start">{{ item.PRO_Contrato }}</td>
+                  <td class="text-center">
+                    {{ item.VME_DataVenda }}
+                  </td>
                   <td
                     :class="
-                      overdue(item.DataMedicao)
-                        ? item.CLSDataMedicao != ''
+                      overdue(item.CTAG_DataAgendamento_0)
+                        ? item.CTAG_DataConclusao_0 != ''
                           ? 'text-center green--text text--darken-4'
                           : 'text-center red--text text--darken-4'
                         : 'text-center'
                     "
                   >
                     {{
-                      item.CLSDataMedicao != ""
-                        ? item.CLSDataMedicao
-                        : item.DataMedicao
+                      item.CTAG_DataConclusao_0 != ""
+                        ? item.CTAG_DataConclusao_0
+                        : item.CTAG_DataAgendamento_0
                     }}
-                    <v-badge style="position: relative"
-                      v-show="item.ATDataMedicao > 0"
+                    <v-badge
+                      style="position: relative"
+                      v-show="item.Atraso_0 > 0"
                       :color="
-                        overdue(item.DataMedicao)
-                          ? item.CLSDataMedicao != ''
+                        overdue(item.CTAG_DataAgendamento_0)
+                          ? item.CTAG_DataConclusao_0 != ''
                             ? 'green'
                             : 'red'
                           : 'green'
                       "
-                      :content="item.ATDataMedicao"
+                      :content="item.Atraso_0"
                       class="mb-2"
                     >
                     </v-badge>
                   </td>
                   <td
                     :class="
-                      overdue(item.DataTecnico)
-                        ? item.CLSDataTecnico != ''
+                      overdue(item.CTAG_DataAgendamento_1)
+                        ? item.CTAG_DataConclusao_1 != ''
                           ? 'text-center green--text text--darken-4'
                           : 'text-center red--text text--darken-4'
                         : 'text-center'
                     "
                   >
                     {{
-                      item.CLSDataTecnico != ""
-                        ? item.CLSDataTecnico
-                        : item.DataTecnico
+                      item.CTAG_DataConclusao_1 != ""
+                        ? item.CTAG_DataConclusao_1
+                        : item.CTAG_DataAgendamento_1
                     }}
-                    <v-badge style="position: relative"
-                      v-show="item.ATDataTecnico > 0"
+                    <v-badge
+                      style="position: relative"
+                      v-show="item.Atraso_1 > 0"
                       :color="
-                        overdue(item.DataTecnico)
-                          ? item.CLSDataTecnico != ''
+                        overdue(item.CTAG_DataAgendamento_1)
+                          ? item.CTAG_DataConclusao_1 != ''
                             ? 'green'
                             : 'red'
                           : 'green'
                       "
-                      :content="item.ATDataTecnico"
+                      :content="item.Atraso_1"
                       class="mb-2"
                     >
                     </v-badge>
                   </td>
                   <td
                     :class="
-                      overdue(item.DataReuniao)
-                        ? item.CLSDataReuniao != ''
+                      overdue(item.CTAG_DataAgendamento_2)
+                        ? item.CTAG_DataConclusao_2 != ''
                           ? 'text-center green--text text--darken-4'
                           : 'text-center red--text text--darken-4'
                         : 'text-center'
                     "
                   >
                     {{
-                      item.CLSDataReuniao != ""
-                        ? item.CLSDataReuniao
-                        : item.DataReuniao
+                      item.CTAG_DataConclusao_2 != ""
+                        ? item.CTAG_DataConclusao_2
+                        : item.CTAG_DataAgendamento_2
                     }}
-                    <v-badge style="position: relative"
-                      v-show="item.ATDataReuniao > 0"
+                    <v-badge
+                      style="position: relative"
+                      v-show="item.Atraso_2 > 0"
                       :color="
-                        overdue(item.DataReuniao)
-                          ? item.CLSDataReuniao != ''
+                        overdue(item.CTAG_DataAgendamento_2)
+                          ? item.CTAG_DataConclusao_2 != ''
                             ? 'green'
                             : 'red'
                           : 'green'
                       "
-                      :content="item.ATDataReuniao"
+                      :content="item.Atraso_2"
                       class="mb-2"
                     >
                     </v-badge>
                   </td>
                   <td
                     :class="
-                      overdue(item.DataAssinatura)
-                        ? item.CLSDataAssinatura != ''
+                      overdue(item.CTAG_DataAgendamento_3)
+                        ? item.CTAG_DataConclusao_3 != ''
                           ? 'text-center green--text text--darken-4'
                           : 'text-center red--text text--darken-4'
                         : 'text-center'
                     "
                   >
                     {{
-                      item.CLSDataAssinatura != ""
-                        ? item.CLSDataAssinatura
-                        : item.DataAssinatura
+                      item.CTAG_DataConclusao_3 != ""
+                        ? item.CTAG_DataConclusao_3
+                        : item.CTAG_DataAgendamento_3
                     }}
-                    <v-badge style="position: relative"
-                      v-show="item.ATDataAssinatura > 0"
+                    <v-badge
+                      style="position: relative"
+                      v-show="item.Atraso_3 > 0"
                       :color="
-                        overdue(item.DataAssinatura)
-                          ? item.CLSDataAssinatura != ''
+                        overdue(item.CTAG_DataAgendamento_3)
+                          ? item.CTAG_DataConclusao_3 != ''
                             ? 'green'
                             : 'red'
                           : 'green'
                       "
-                      :content="item.ATDataAssinatura"
+                      :content="item.Atraso_3"
                       class="mb-2"
                     >
                     </v-badge>
                   </td>
                   <td
                     :class="
-                      overdue(item.DataProjetoTec)
-                        ? item.CLSDataProjetoTec != ''
+                      overdue(item.CTAG_DataAgendamento_4)
+                        ? item.CTAG_DataConclusao_4 != ''
                           ? 'text-center green--text text--darken-4'
                           : 'text-center red--text text--darken-4'
                         : 'text-center'
                     "
                   >
                     {{
-                      item.CLSDataProjetoTec != ""
-                        ? item.CLSDataProjetoTec
-                        : item.DataProjetoTec
+                      item.CTAG_DataConclusao_4 != ""
+                        ? item.CTAG_DataConclusao_4
+                        : item.CTAG_DataAgendamento_4
                     }}
-                    <v-badge style="position: relative"
-                      v-show="item.ATDataProjetoTec > 0"
+                    <v-badge
+                      style="position: relative"
+                      v-show="item.Atraso_4 > 0"
                       :color="
-                        overdue(item.DataProjetoTec)
-                          ? item.CLSDataProjetoTec != ''
+                        overdue(item.CTAG_DataAgendamento_4)
+                          ? item.CTAG_DataConclusao_4 != ''
                             ? 'green'
                             : 'red'
                           : 'green'
                       "
-                      :content="item.ATDataProjetoTec"
+                      :content="item.Atraso_4"
                       class="mb-2"
                     >
                     </v-badge>
                   </td>
                   <td class="text-center">
-                    {{ item.CLSDataProjetoTec }}
+                    {{ item.CTAG_DataConclusao_4 }}
                   </td>
                   <td
                     :class="
@@ -293,7 +314,7 @@
                         : 'text-center'
                     "
                   >
-                    {{ item.Atraso }}
+                    {{ item.TotalAtraso }}
                   </td>
                   <td>
                     <v-btn @click="expand(!isExpanded)" icon color="gray"
@@ -315,16 +336,18 @@
                       style="background-color: #f0f0f0"
                     >
                       <v-stepper-step
-                        :complete="item.CLSDataMedicao != ''"
+                        :complete="item.CTAG_DataConclusao_0 != ''"
                         step="1"
                         editable
                         :edit-icon="
-                          item.CLSDataMedicao != ''
+                          item.CTAG_DataConclusao_0 != ''
                             ? 'mdi-check'
                             : 'mdi-progress-clock'
                         "
                         :color="
-                          item.CLSDataMedicao != '' ? 'success' : 'primary'
+                          item.CTAG_DataConclusao_0 != ''
+                            ? 'success'
+                            : 'primary'
                         "
                       >
                         Medição
@@ -357,7 +380,11 @@
                                   :item-text="(obj) => obj['name']"
                                 ></v-autocomplete>
 
-                                <v-btn color="primary" @click="stp = 2" x-large>
+                                <v-btn
+                                  color="primary"
+                                  @click="consoleImprimi"
+                                  x-large
+                                >
                                   Agendar
                                 </v-btn>
                                 <v-btn
@@ -406,16 +433,18 @@
                       </v-stepper-content>
 
                       <v-stepper-step
-                        :complete="item.CLSDataTecnico != ''"
+                        :complete="item.CTAG_DataConclusao_1 != ''"
                         step="2"
                         editable
                         :edit-icon="
-                          item.CLSDataTecnico != ''
+                          item.CTAG_DataConclusao_1 != ''
                             ? 'mdi-check'
                             : 'mdi-progress-clock'
                         "
                         :color="
-                          item.CLSDataTecnico != '' ? 'success' : 'primary'
+                          item.CTAG_DataConclusao_1 != ''
+                            ? 'success'
+                            : 'primary'
                         "
                       >
                         Atribuir Técnico
@@ -474,16 +503,18 @@
                       </v-stepper-content>
 
                       <v-stepper-step
-                        :complete="item.CLSDataReuniao != ''"
+                        :complete="item.CTAG_DataConclusao_2 != ''"
                         step="3"
                         editable
                         :edit-icon="
-                          item.CLSDataReuniao != ''
+                          item.CTAG_DataConclusao_2 != ''
                             ? 'mdi-check'
                             : 'mdi-progress-clock'
                         "
                         :color="
-                          item.CLSDataReuniao != '' ? 'success' : 'primary'
+                          item.CTAG_DataConclusao_2 != ''
+                            ? 'success'
+                            : 'primary'
                         "
                       >
                         Reunião
@@ -599,16 +630,18 @@
                       </v-stepper-content>
 
                       <v-stepper-step
-                        :complete="item.CLSDataAssinatura != ''"
+                        :complete="item.CTAG_DataConclusao_3 != ''"
                         step="4"
                         editable
                         :edit-icon="
-                          item.CLSDataAssinatura != ''
+                          item.CTAG_DataConclusao_3 != ''
                             ? 'mdi-check'
                             : 'mdi-progress-clock'
                         "
                         :color="
-                          item.CLSDataAssinatura != '' ? 'success' : 'primary'
+                          item.CTAG_DataConclusao_3 != ''
+                            ? 'success'
+                            : 'primary'
                         "
                       >
                         Assinatura
@@ -751,16 +784,18 @@
                       </v-stepper-content>
 
                       <v-stepper-step
-                        :complete="item.CLSDataProjetoTec != ''"
+                        :complete="item.CTAG_DataConclusao_4 != ''"
                         step="5"
                         editable
                         :edit-icon="
-                          item.CLSDataProjetoTec != ''
+                          item.CTAG_DataConclusao_4 != ''
                             ? 'mdi-check'
                             : 'mdi-progress-clock'
                         "
                         :color="
-                          item.CLSDataProjetoTec != '' ? 'success' : 'primary'
+                          item.CTAG_DataConclusao_4 != ''
+                            ? 'success'
+                            : 'primary'
                         "
                       >
                         Projeto Técnico
@@ -791,18 +826,36 @@
                   </template>
                 </td>
               </template>
+
+              <!-- <template v-slot:footer.page-text="{ pageStart, pageStop, itemsLength}">
+                <p>{pageStart}/{pageStop} de {itemsLength}</p>
+              </temnplate> -->
             </v-data-table>
           </v-flex>
         </v-layout>
+        <v-navigation-drawer v-model="drawer" right absolute temporary >
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>Configurações</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider></v-divider>
+        </v-navigation-drawer>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import util from "../../utils/util";
+import { RepositoryFactory } from "../../repositories/repositoryFactory";
+const ControleTecnico = RepositoryFactory.get("controleTecnico");
+
 export default {
   data() {
     return {
+      drawer: null,
       searchExpanded: false,
       filterExpanded: false,
       helperDialog: false,
@@ -810,183 +863,114 @@ export default {
       singleExpand: true,
       stp: 0,
       headers: [
-        { text: "Loja", value: "idLoja" },
-        { text: "Cód. Cli", value: "idCliente" },
-        { text: "Nome", value: "Nome" },
-        { text: "Ambiente", value: "Ambiente" },
-        { text: "Contr.", value: "Contrato" },
+        { text: "Emp", value: "PRO_Emp" },
+        { text: "Loja", value: "PRO_Loja" },
+        { text: "Cód. Cli", value: "Cliente[0].CLI_Codigo" },
+        { text: "Nome", value: "Cliente[0].CLI_Nome" },
+        { text: "Ambiente", value: "PRO_Ambiente" },
+        { text: "Contr.", value: "PRO_Contrato" },
         { text: "Dt. Venda", value: "DataVenda" },
-        { text: "Dt. Med.", value: "DataMedicao" },
-        { text: "Dt.Técnico.", value: "DataTecnico" },
-        { text: "Dt. Reunião.", value: "DataReuniao" },
-        { text: "Dt. Ass.", value: "DataAssinatura" },
+        { text: "Dt. Med.", value: "CTAG_DataAgendamento_0" },
+        { text: "Dt.Técnico.", value: "CTAG_DataAgendamento_1" },
+        { text: "Dt. Reunião.", value: "CTAG_DataAgendamento_2" },
+        { text: "Dt. Ass.", value: "CTAG_DataAgendamento_3" },
         { text: "Dt. Proj. Tec.", value: "DataIniExecProjeto" },
-        { text: "Dt. Conclusão", value: "CLSDataProjetoTec" },
+        { text: "Dt. Conclusão", value: "CTAG_DataConclusao_4" },
         { text: "TOTAL ATRASO", value: "Atraso" },
         { text: "", value: "data-table-expand" },
       ],
-      ambientes: [
-        {
-          idLoja: "2009",
-          Cliente: {
-            idCliente: "2825",
-            Nome: "Amanda Miranda",
-            Email: "amanda@teste.com",
-            Telefone: "(14) 3433-5682",
-            Celular: "(14 99456-4523)",
+      eventos: [],
+      evento: {
+        PRO_Emp: 0,
+        PRO_Loja: 0,
+        PRO_Opcao: "",
+        PRO_Ambiente: "",
+        PRO_Contrato: 0,
+        Cliente: [
+          {
+            CLI_Codigo: 0,
+            CLI_Nome: "",
+            CLI_Email: "",
+            CLI_CorFone1: 0,
+            CLI_CorFone2: 0,
           },
-          Ambiente: "AA",
-          Contrato: "200901996",
-          Tecnico: "Bruno Cunha",
-          Medidor: "",
-          DataVenda: "02/09/2020",
-          DataMedicao: "07/09/2020",
-          CLSDataMedicao: "07/09/2020",
-          ATDataMedicao: 5,
-          DataTecnico: "08/09/2020",
-          CLSDataTecnico: "12/09/2020",
-          ATDataTecnico: 5,
-          DataReuniao: "14/09/2020",
-          CLSDataReuniao: "14/09/2020",
-          ATDataReuniao: 2,
-          TAssinatura: ["18/09/2020", "21/09/2020"],
-          DataAssinatura: "28/09/2020",
-          CLSDataAssinatura: "28/09/2020",
-          ATDataAssinatura: 14,
-          DataProjetoTec: "28/09/2020",
-          CLSDataProjetoTec: "",
-          ATDataProjetoTec: 15,
-          Atraso: 41,
-        },
-        {
-          idLoja: "2009",
-          Cliente: {
-            idCliente: "2266",
-            Nome: "João da Cunha",
-            Email: "joao@teste.com",
-            Telefone: "(14) 3433-5682",
-            Celular: "(14 99456-4523)",
+        ],
+        Agendamento_Medicao: [
+          {
+            CTAG_Evento: 0,
+            CTEV_Descricao: "",
+            CTAG_DataCadastro: "",
+            USU_CodigoCad: 0,
+            USU_NomeCad: "",
+            CTAG_DataAgendamento: "",
+            USU_CodigoAge: 0,
+            USU_NomeAge: "",
+            CTAG_DataConclusao: "",
+            USU_CodigoCon: 0,
+            USU_NomeCon: "",
+            CTAG_DataDesativado: "",
+            USU_CodigoDes: 0,
+            USU_NomeDes: "",
+            Atraso: 0,
           },
-          Ambiente: "AB",
-          Contrato: "200901977",
-          Tecnico: "",
-          Medidor: "",
-          DataVenda: "12/08/2020",
-          DataMedicao: "15/08/2020",
-          CLSDataMedicao: "",
-          ATDataMedicao: 62,
-          DataTecnico: "",
-          CLSDataTecnico: "",
-          ATDataTecnico: 0,
-          DataReuniao: "",
-          CLSDataReuniao: "",
-          ATDataReuniao: 0,
-          TAssinatura: [],
-          DataAssinatura: "",
-          CLSDataAssinatura: "",
-          ATDataAssinatura: 0,
-          DataProjetoTec: "",
-          CLSDataProjetoTec: "",
-          ATDataProjetoTec: 0,
-          Atraso: 62,
-        },
-        {
-          idLoja: "2009",
-          Cliente: {
-            idCliente: "2119",
-            Nome: "Mercelo Medeiros",
-            Email: "marcelo@teste.com",
-            Telefone: "(14) 3433-5682",
-            Celular: "(14 99456-4523)",
+        ],
+        Agendamento_VisitaTecnica: [
+          {
+            CTAG_Evento: 0,
+            CTEV_Descricao: "",
+            CTAG_DataCadastro: "",
+            USU_CodigoCad: 0,
+            USU_NomeCad: "",
+            CTAG_DataAgendamento: "",
+            USU_CodigoAge: 0,
+            USU_NomeAge: "",
+            CTAG_DataConclusao: "",
+            USU_CodigoCon: 0,
+            USU_NomeCon: "",
+            CTAG_DataDesativado: "",
+            USU_CodigoDes: 0,
+            USU_NomeDes: "",
+            Atraso: 0,
           },
-          Ambiente: "AC",
-          Contrato: "200902006",
-          Tecnico: "",
-          Medidor: "",
-          DataVenda: "03/09/2020",
-          DataMedicao: "05/09/2020",
-          CLSDataMedicao: "08/09/2020",
-          ATDataMedicao: 3,
-          DataTecnico: "08/09/2020",
-          CLSDataTecnico: "11/09/2020",
-          ATDataTecnico: 3,
-          DataReuniao: "11/09/2020",
-          CLSDataReuniao: "14/09/2020",
-          ATDataReuniao: 3,
-          TAssinatura: ["10/09/2020", "25/09/2020"],
-          DataAssinatura: "14/09/2020",
-          CLSDataAssinatura: "17/09/2020",
-          ATDataAssinatura: 3,
-          DataProjetoTec: "17/09/2020",
-          CLSDataProjetoTec: "21/09/2020",
-          ATDataProjetoTec: 4,
-          Atraso: 16,
-        },
-        {
-          idLoja: "2009",
-          Cliente: {
-            idCliente: "2565",
-            Nome: "Caio Pernoso",
-            Email: "caio@teste.com",
-            Telefone: "(14) 3433-5682",
-            Celular: "(14 99456-4523)",
+        ],
+        Agendamento_Reuniao: [
+          {
+            CTAG_Evento: 0,
+            CTEV_Descricao: "",
+            CTAG_DataCadastro: "",
+            USU_CodigoCad: 0,
+            USU_NomeCad: "",
+            CTAG_DataAgendamento: "",
+            USU_CodigoAge: 0,
+            USU_NomeAge: "",
+            CTAG_DataConclusao: "",
+            USU_CodigoCon: 0,
+            USU_NomeCon: "",
+            CTAG_DataDesativado: "",
+            USU_CodigoDes: 0,
+            USU_NomeDes: "",
+            Atraso: 0,
           },
-          Ambiente: "AD",
-          Contrato: "200901615",
-          Tecnico: "",
-          Medidor: "",
-          DataVenda: "02/10/2020",
-          DataMedicao: "05/10/2020",
-          CLSDataMedicao: "06/10/2020",
-          ATDataMedicao: 4,
-          DataTecnico: "08/10/2020",
-          CLSDataTecnico: "12/10/2020",
-          ATDataTecnico: 6,
-          DataReuniao: "13/09/2020",
-          CLSDataReuniao: "",
-          ATDataReuniao: 1,
-          TAssinatura: [""],
-          DataAssinatura: "",
-          CLSDataAssinatura: "",
-          ATDataAssinatura: 0,
-          DataProjetoTec: "",
-          CLSDataProjetoTec: "",
-          ATDataProjetoTec: 0,
-          Atraso: 11,
-        },
-      ],
-      explodItem: {
-        idLoja: "",
-        Cliente: {
-          idCliente: "",
-          Nome: "",
-          Email: "",
-          Telefone: "",
-          Celular: "",
-          Contatos: [{ Tentativa: 0, Data: "" }],
-        },
-        Ambiente: "",
-        Contrato: "",
-        Tecnico: "",
-        Medidor: "",
-        DataVenda: "",
-        DataMedicao: "",
-        CLSDataMedicao: "",
-        ATDataMedicao: 0,
-        DataTecnico: "",
-        CLSDataTecnico: "",
-        ATDataTecnico: 0,
-        DataReuniao: "",
-        CLSDataReuniao: "",
-        ATDataReuniao: 0,
-        TAssinatura: [],
-        DataAssinatura: "",
-        CLSDataAssinatura: "",
-        ATDataAssinatura: 0,
-        DataProjetoTec: "",
-        CLSDataProjetoTec: "",
-        ATDataProjetoTec: 0,
-        Atraso: 0,
+        ],
+        Agendamento_ProjetoTecnico: [
+          {
+            CTAG_Evento: 0,
+            CTEV_Descricao: "",
+            CTAG_DataCadastro: "",
+            USU_CodigoCad: 0,
+            USU_NomeCad: "",
+            CTAG_DataAgendamento: "",
+            USU_CodigoAge: 0,
+            USU_NomeAge: "",
+            CTAG_DataConclusao: "",
+            USU_CodigoCon: 0,
+            USU_NomeCon: "",
+            CTAG_DataDesativado: "",
+            USU_CodigoDes: 0,
+            USU_NomeDes: "",
+            Atraso: 0,
+          },
+        ],
       },
       type: "month",
       mode: "stack",
@@ -1049,35 +1033,54 @@ export default {
     };
   },
   computed: {
-    computedDateFormattedMedicao: {
-      // getter
-      get: function () {
-        return this.formatDate(
-          this.explodItem.CLSDataMedicao != ""
-            ? this.explodItem.CLSDataMedicao
-            : this.explodItem.DataMedicao
-        );
-      },
-      // setter
-      set: function (newValue) {
-        return this.formatDatePTBR(newValue);
-      },
-    },
+    // cpuDateFormatted(dateTime) {
+    //   console.log(dateTime);
+    //   return this.formatDate(dateTime);
+    // },
+  },
+  created() {
+    this.fetch();
   },
   methods: {
-    loadExplod({ item, value }) {
+    fetch() {
+      let modo = 0;
+      let payload = { Loja: top.LOJA_PADRAO, MesMinimo: 3 };
+      ControleTecnico.getAgendamento(modo, payload).then((rt) => {
+        this.eventos = rt;
+      });
+    },
+    async loadExpanded({ item, value }) {
       if (value) {
-        this.editedIndex = this.ambientes.indexOf(item);
-        this.explodItem = Object.assign({}, item);
-        if (this.explodItem.CLSDataProjetoTec != "") {
+        let modo = 1;
+        let payload = {
+          Loja: top.LOJA_PADRAO,
+          Cliente: item.PRO_Cliente,
+          Contrato: item.PRO_Contrato,
+          MesMinimo: 3,
+        };
+        const { data } = await ControleTecnico.getAgendamento(modo, payload);
+        this.evento = Object.assign({}, data);
+        if (item.CTAG_DataConclusao_4 && item.CTAG_DataConclusao_4 != "") {
           this.stp = 0;
-        } else if (this.explodItem.CLSDataAssinatura != "") {
+        } else if (
+          item.CTAG_DataConclusao_3 &&
+          item.CTAG_DataConclusao_3 != ""
+        ) {
           this.stp = 5;
-        } else if (this.explodItem.CLSDataReuniao != "") {
+        } else if (
+          item.CTAG_DataConclusao_2 &&
+          item.CTAG_DataConclusao_2 != ""
+        ) {
           this.stp = 4;
-        } else if (this.explodItem.CLSDataTecnico != "") {
+        } else if (
+          item.CTAG_DataConclusao_1 &&
+          item.CTAG_DataConclusao_1 != ""
+        ) {
           this.stp = 3;
-        } else if (this.explodItem.CLSDataMedicao != "") {
+        } else if (
+          item.CTAG_DataConclusao_0 &&
+          item.CTAG_DataConclusao_0 != ""
+        ) {
           this.stp = 2;
         } else {
           this.stp = 1;
@@ -1129,21 +1132,24 @@ export default {
     },
     formatDate(date) {
       if (!date) return null;
-      const [dia, mes, ano] = date.split("/");
-      return `${ano}-${mes}-${dia}`;
-    },
-    formatDatePTBR(newDate) {
-      if (!newDate) return null;
-      const [ano, mes, dia] = newDate.split("-");
-      this.explodItem.DataMedicao = `${dia}/${mes}/${ano}`;
-
-      return true;
+      var options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      const dt = new Date(date);
+      return dt.toLocaleDateString("pt-BR", options);
     },
     overdue(date) {
       const dn = Date.now();
       const dateNow = new Date();
       const dateParam = new Date(this.formatDate(date));
       return dateNow > dateParam && date != "";
+    },
+    consoleImprimi() {
+      console.log(top);
     },
   },
 };
